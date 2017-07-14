@@ -9,6 +9,9 @@ module Molecule
       end
     end
 
+    def before_render; end
+    def after_render; end
+
     def html_text
       @html_text ||= ''
     end
@@ -72,7 +75,7 @@ module Molecule
       build_style
 
       attributes.reject! do |key, handler|
-        key[0, 2] == 'on'
+        key[0, 2] == 'on' || key == 'hook' || key == 'unhook'
       end
 
       attributes.map do |key, value|
@@ -121,10 +124,13 @@ module Molecule
     end
 
     def parse
+      before_render
       @depth = 0
       @tag_names = {}
       @attributes_s = {}
-      render.to_s
+      result = render.to_s
+      after_render
+      result
     end
 
     def method_missing(method, attributes = nil, &content)
@@ -153,9 +159,20 @@ module Molecule
     end
 
     module ClassMethods
-      def init
+      def init(&block)
         define_method :before_render do
-          yield
+          self.instance_eval &block
+        end
+      end
+
+      def interaction(name, interaction)
+        define_method "#{name}!" do |params|
+          Molecule::PowerCable.send('Users/CreateUser', params) do |response|
+            instance_variable_set("@#{name}".to_sym, response[:data])
+          end
+        end
+        define_method name do
+          instance_variable_get "@#{name}".to_sym
         end
       end
     end

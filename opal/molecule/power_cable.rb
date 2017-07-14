@@ -11,10 +11,9 @@ module Molecule
 
     @messages = {}
     CHANNEL.on :message do |response|
-      data = response.data[:data]
       g_uid = response.data['_uid']
       message = @messages.delete(g_uid)
-      message.call(data)
+      message.call(response.data)
     end
 
     @chars = %w[a A b B c C ç Ç d D e E f F g G ğ Ğ h H ı I i İ j J k K l L m M n N o O ö Ö p P q Q r R s S ş Ş t T]
