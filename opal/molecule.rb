@@ -1,6 +1,7 @@
 require 'opal'
 require 'js'
 require 'console'
+require 'active_support/time'
 require 'browser'
 require 'bowser'
 require 'power_strip'
@@ -21,6 +22,8 @@ require 'molecule/browser'
 require 'molecule/routes'
 require 'molecule/router'
 require 'molecule/power_cable'
+require 'molecule/session'
+require 'molecule/cookie'
 
 
 

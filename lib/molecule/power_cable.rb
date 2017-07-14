@@ -2,7 +2,7 @@ require 'power_strip'
 
 module Molecule
   class PowerCable
-    def self.send(interaction, params)
+    def self.send(interaction, params = {})
       interaction = interaction.gsub('/', '::').constantize
       outcome = interaction.run(params)
       result = {

@@ -12,7 +12,7 @@ module Molecule
       attr_writer :redis_session_store
 
       def redis_session_store
-        @redis_session_store ||= Redis.new(host: '10.0.1.1', port: 6379, db: 15)
+        @redis_session_store ||= Redis.new(host: 'localhost', port: 6379, db: 15)
       end
     end
   end

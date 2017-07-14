@@ -1,3 +1,5 @@
+require 'promise'
+
 module Molecule
   class PowerCable
 
@@ -9,11 +11,12 @@ module Molecule
 
     CHANNEL = client.subscribe(:power_cable)
 
-    @messages = {}
+    @blocks = {}
+    @promises = {}
     CHANNEL.on :message do |response|
       g_uid = response.data['_uid']
-      message = @messages.delete(g_uid)
-      message.call(response.data)
+      @blocks.delete(g_uid).call(response.data)
+      @promises.delete(g_uid).resolve(response.data)
     end
 
     @chars = %w[a A b B c C ç Ç d D e E f F g G ğ Ğ h H ı I i İ j J k K l L m M n N o O ö Ö p P q Q r R s S ş Ş t T]
@@ -23,10 +26,13 @@ module Molecule
       @chars.sample(8).join
     end
 
-    def self.send(interaction, params, &block)
+    def self.send(interaction, params = {}, &block)
+      promise = Promise.new
       g_uid = uid
-      promise = CHANNEL.message interaction: interaction, params: params, '_uid' => g_uid
-      @messages[g_uid] = block
+      CHANNEL.message interaction: interaction, params: params, '_uid' => g_uid
+      @blocks[g_uid] = block
+      @promises[g_uid] = promise
+      promise
     end
   end
 end

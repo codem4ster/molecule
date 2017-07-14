@@ -1,5 +1,6 @@
 require 'opal'
 require 'opal-browser'
+require 'opal-activesupport'
 require 'bowser'
 require 'power_strip'
 require 'active_interaction'

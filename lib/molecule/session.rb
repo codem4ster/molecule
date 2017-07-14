@@ -9,14 +9,23 @@ module Molecule
       @ttl = ttl
     end
 
+    def store
+      self.class.instance_variable_get :'@store'
+    end
+
+    def start
+      store.set key, {}
+      store.expire key, ttl
+    end
+
     def set(var_key, value)
-      data = @store.get key
-      @store.set key, data.merge(var_key => value)
-      @store.expire key, ttl
+      data = store.get key
+      store.set key, data.merge(var_key => value)
+      store.expire key, ttl
     end
 
     def get(var_key)
-      @store.expire key, ttl
+      store.expire key, ttl
       data = @store.get key
       data[var_key] if data
     end

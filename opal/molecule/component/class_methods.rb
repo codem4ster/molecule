@@ -14,12 +14,15 @@ module Molecule
       def injections
         @injections || {}
       end
-      
+
       def interaction(name, interaction)
         define_method "#{name}!" do |params|
-          Molecule::PowerCable.send('Users/CreateUser', params) do |response|
-            instance_variable_set("@#{name}".to_sym, response)
-            render!
+          Molecule::Session.create.then do |session|
+            params[:s_id] = session.key
+            Molecule::PowerCable.send(interaction, params) do |response|
+              instance_variable_set("@#{name}".to_sym, response)
+              render!
+            end
           end
         end
         define_method "#{name}?" do
@@ -34,9 +37,7 @@ module Molecule
 
       def init(&block)
         define_method :before_render do
-          unless self.instance_eval { @initied }
-            self.instance_eval(&block)
-          end
+          self.instance_eval { @initied } || self.instance_eval(&block)
           self.instance_eval { @initied = true }
         end
       end
