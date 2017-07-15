@@ -6,18 +6,18 @@ module Molecule
     attr_writer :key
 
     def key
-      @key ||= Molecule::Cookie.get(:s_id)
+      @key ||= Molecule::Cookie.get(:_sid)
     end
 
     def request_key
       Molecule::PowerCable.send('Molecule/SessionStart') do |response|
         self.key = response[:data]
-        Molecule::Cookie.set(:s_id, response[:data], 30.minutes)
+        Molecule::Cookie.set(:_sid, response[:data], 30.minutes)
       end
     end
 
     def destroy
-      Molecule::Cookie.set(:s_id, nil, 1.second)
+      Molecule::Cookie.set(:_sid, nil, 1.second)
     end
 
     class << self
