@@ -12,7 +12,7 @@ module Molecule
     end
 
     def store
-      self.class.instance_variable_get :'@store'
+      self.class.store
     end
 
     def start

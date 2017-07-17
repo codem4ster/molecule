@@ -1,4 +1,4 @@
-Rails.application.routes.draw do
+Molecule::Engine.routes.draw do
 
   mount PowerStrip, at: '/power_cable'
 
