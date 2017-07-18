@@ -8,7 +8,6 @@ class MoleculeController < ApplicationController
       raise 'Route cannot found:' + request.path unless @parts
       render 'molecule/bots'
     else
-      PowerStrip.start
       render 'molecule/non-bots'
     end
   end

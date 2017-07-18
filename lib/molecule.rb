@@ -21,6 +21,7 @@ module Molecule
       paths.each do |path|
         ActiveSupport::Dependencies.autoload_paths << path
       end
+      PowerStrip.start
     end
   end
 end
