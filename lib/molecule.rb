@@ -1,5 +1,6 @@
 require 'opal'
 require 'opal-browser'
+require 'opal-jquery'
 require 'opal-activesupport'
 require 'bowser'
 require 'power_strip'
@@ -13,7 +14,6 @@ module Molecule
   # Molecule engine for rails
   class Engine < ::Rails::Engine
     config.assets.paths << File.expand_path('../../opal', __FILE__)
-    PowerStrip.start
     initializer 'molecule.load_app_root' do |app|
       config.assets.paths << app.root.join('app', 'components')
       paths = [app.root.join('app', 'components'),

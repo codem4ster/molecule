@@ -11,6 +11,7 @@ module Molecule
     end
 
     def mount_to(element)
+      return self if `window.__server_rendered__`
       raise Error, "Can't mount #{self.class}, target element not found!" unless element
       @root_component = self
       init_injections

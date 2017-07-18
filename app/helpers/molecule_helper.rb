@@ -3,7 +3,8 @@ module MoleculeHelper
   def component(name, options = {})
     comp = name.new
     comp.props = options
-    comp.parse
+    script = "<script type=\"text/javascript\">var __server_rendered__ = true</script>\n"
+    script + comp.parse
   end
 
 end

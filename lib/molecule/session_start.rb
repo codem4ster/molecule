@@ -4,9 +4,11 @@ module Molecule
   # Starts the session and writes an empty hash to redis cache
   class SessionStart < ActiveInteraction::Base
 
+    string :guid, default: nil
+
     def execute
-      guid = UUID.new.generate
-      session = Molecule::Session.new(guid)
+      self.guid = UUID.new.generate unless guid
+      session = Molecule::Session.instance(guid)
       session.start
       guid
     end

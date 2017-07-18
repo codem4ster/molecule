@@ -86,10 +86,15 @@ module Molecule
     end
 
     def tag(tag_name, attributes = nil, &content)
-      self.attributes = (attributes || {})
       self.tag_name = tag_name
-      return self if !block_given? && attributes.nil?
-      render_to_html(&content)
+      if attributes.kind_of? String
+        self.attributes = {}
+        render_to_html { attributes }
+      else
+        self.attributes = (attributes || {})
+        return self if !block_given? && attributes.nil?
+        render_to_html(&content)
+      end
       self
     end
 
@@ -120,7 +125,7 @@ module Molecule
     def component(name, options = {})
       comp = name.new
       comp.props = options[:props]
-      comp.parse
+      self.html_text += comp.parse
     end
 
     def parse
@@ -167,7 +172,7 @@ module Molecule
 
       def interaction(name, interaction)
         define_method "#{name}!" do |params|
-          Molecule::PowerCable.send('Users/CreateUser', params) do |response|
+          Molecule::PowerCable.send(interaction, params) do |response|
             instance_variable_set("@#{name}".to_sym, response[:data])
           end
         end

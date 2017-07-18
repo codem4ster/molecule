@@ -6,6 +6,7 @@ PATH
       bowser
       grand_central
       opal-browser
+      opal-jquery
       opal-rails
       opal-virtual-dom (~> 0.5.0)
       power_strip

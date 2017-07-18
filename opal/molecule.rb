@@ -1,5 +1,7 @@
 require 'opal'
 require 'js'
+require 'jquery'
+require 'opal-jquery'
 require 'console'
 require 'active_support/time'
 require 'browser'
