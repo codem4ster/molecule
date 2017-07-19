@@ -42,7 +42,7 @@ module Molecule
         return go_to(url_for(route[:redirect_to])) if route[:redirect_to]
         return @route = route
       end
-      raise Error, "Can't find route for url"
+      raise Molecule::Error, "Can't find route for url"
     end
 
     def find_component(route)
