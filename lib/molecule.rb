@@ -16,6 +16,7 @@ module Molecule
     config.assets.paths << File.expand_path('../../opal', __FILE__)
     initializer 'molecule.load_app_root' do |app|
       config.assets.paths << app.root.join('app', 'components')
+      config.assets.paths << app.root.join('app', 'assets', 'vendor')
       paths = [app.root.join('app', 'components'),
                File.expand_path('../', __FILE__)]
       paths.each do |path|

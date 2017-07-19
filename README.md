@@ -1,28 +1,167 @@
 # Molecule
-Short description and motivation.
+This gem adds a frontend layer to Rails which you can write all your html and javascript with ruby.
+Also molecule can render (react like) components and when doing this it uses  virtual-dom (thanks to inesita gem).
+It can communicate with backend by websockets automatically. It can use inesita routers for routing purposes.
 
 ## Usage
-How to use my plugin.
+
+#### Routing
+```ruby
+# app/components/layout.rb
+class Layout
+  include Molecule::Component
+
+  def render
+    div do
+      component props[:child]
+    end
+  end
+end
+```
+```ruby
+# app/components/home.rb
+class Home
+  include Molecule::Component
+
+  def render
+    div do
+      h1 'Hello From Molecule'
+    end
+  end
+end
+```
+```ruby
+# app/components/router.rb
+class Router
+  include Molecule::Router
+
+  def routes
+    route '/', to: Layout, props: { child: Home }
+    # route '/another-route', to: Layouts, props: { child: AnotherComponent }
+  end
+end
+```
+```ruby
+# app/config/routes.rb
+Rails.application.routes.draw do
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  # root 'site#index'
+
+  # Mount for websocket support
+  mount Molecule::Engine, at: '/molecule'
+  # This is for single page application and server side rendering support
+  # make sure that this line must be end of the file
+  get '/(*others)', to: 'molecule#spa'
+end
+```
+
+Molecule use its own action for spa renders, this action ('molecule#spa') can handle search engines and
+return them server side rendered data and disable javascripts. But when the normal user comes in javascript 
+rendered site will be seen. See: `app/controllers/molecule_controller.rb` in gem.
+
+#### Rendering
+
+
+
+Molecule can render components inside other components. See: https://inesita.fazibear.me/ for details
+```ruby
+# app/components/home.rb
+class Home
+  include Molecule::Component
+
+  def render
+    div do
+      component Header, props: { title: 'My Page' }
+      div 'This is home body'
+    end
+  end
+end
+````
+```ruby
+# app/components/header.rb
+class Header
+  include Molecule::Component
+
+  def render
+    div do
+      div.title { 'The title is: ' + props.title }
+    end
+  end
+end
+````
+
+#### Communication with backend
+Molecule components can communicate with backend through a web socket pipe which will be initialized when 
+molecule loads the page. These pipe sends data to a backend interaction which is provided by ActiveInteraction gem
+executes it and capture its result from client.
+For using websocket and session handler, you must need to install **redis** to server.
+```ruby
+# app/components/home.rb
+class Home
+  include Molecule::Component
+  
+  # this defines the backend EchoUser interaction
+  # also defines user_data method to bind results
+  # for namespaced classes use '/' etc; 'UserInteractions/EchoUser'
+  interaction :user_data, 'EchoUser'
+
+  # init runs before the render only one time!
+  init do
+    # run the interaction with given parameters, bind result to user_data and rerender component
+    user_data!(username: 'user')
+  end
+
+  def render
+    div do
+      component Header, props: { title: 'My Page' }
+      if user_data
+        div 'Hello' + user_data[:username]
+      else
+        div 'data placeholder'  
+      end
+      
+    end
+  end
+end
+````
+```ruby
+# app/interactions/echo_user.rb
+class EchoUser < ActiveInteraction::Base
+  string :username
+  # Molecule has an internal session handler
+  object :session, class: Molecule::Session
+  
+  def execute
+    # session set and get method usage
+    # session.set(:user, username)
+    # session.get(:user)
+    
+    # returns data to component
+    { username: username }
+  end
+end
+```
+see; http://devblog.orgsync.com/active_interaction/ for details
 
 ## Installation
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'molecule'
+gem 'molecule', :git => 'http://github.com:codem4ster/molecule.git'
 ```
 
 And then execute:
 ```bash
-$ bundle
+$ bundle install
 ```
+note that this gem is under heavy development yet 
+
 
 Or install it yourself as:
-```bash
-$ gem install molecule
-```
+Not added to rubygems yet
 
 ## Contributing
-Contribution directions go here.
+fork, change, request pull
 
 ## License
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
