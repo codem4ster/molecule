@@ -17,12 +17,10 @@ module Molecule
 
       def interaction(name, interaction)
         define_method "#{name}!" do |params|
-          Molecule::Session.create.then do |session|
-            params[:_sid] = session.key
-            Molecule::PowerCable.send(interaction, params) do |response|
-              instance_variable_set("@#{name}".to_sym, response)
-              render!
-            end
+          params[:_sid] = Molecule::Session.key
+          Molecule::PowerCable.send(interaction, params) do |response|
+            instance_variable_set("@#{name}".to_sym, response)
+            render!
           end
         end
         define_method "#{name}?" do

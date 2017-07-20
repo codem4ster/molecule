@@ -6,14 +6,13 @@ module Molecule
     attr_writer :key
 
     def key
-      @key ||= Molecule::Cookie.get(:_sid)
+      @key ||= (Molecule::Cookie.get(:_sid) || generate_key)
     end
 
-    def request_key
-      Molecule::PowerCable.send('Molecule/SessionStart') do |response|
-        self.key = response[:data]
-        Molecule::Cookie.set(:_sid, response[:data], 30.minutes)
-      end
+    def generate_key
+      key = Molecule::Uid.generate(16)
+      Molecule::Cookie.set(:_sid, key, 1.year)
+      key
     end
 
     def destroy
@@ -21,21 +20,14 @@ module Molecule
     end
 
     class << self
-      @instance = nil
+      attr_writer :instance
 
-      def create
-        promise = Promise.new
-        if @instance
-          promise.resolve @instance
-        else
-          @instance = new
-          if @instance.key
-            promise.resolve @instance
-          else
-            @instance.request_key.then { promise.resolve(@instance) }
-          end
-        end
-        promise
+      def instance
+        @instance ||= new
+      end
+
+      def key
+        instance.key
       end
     end
   end

@@ -15,20 +15,15 @@ module Molecule
       self.class.store
     end
 
-    def start
-      store.set key, {}.to_json
-      store.expire key, ttl
-    end
-
     def set(var_key, value)
-      data = JSON.parse(store.get(key) || {})
+      data = JSON.parse(store.get(key) || '{}')
       store.set key, data.merge(var_key => value).to_json
       store.expire key, ttl
     end
 
     def get(var_key)
       store.expire key, ttl
-      data = JSON.parse(store.get(key) || {})
+      data = JSON.parse(store.get(key) || '{}')
       data[var_key] if data
     end
 

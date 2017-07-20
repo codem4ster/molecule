@@ -22,15 +22,25 @@ module Molecule
 
     def eval_content(&content)
       @depth += 1
+      self.func_count = 0
       result = instance_eval(&content)
+      result = nil if func_count > 0
       @depth -= 1
-      return if html_text == result.to_s
-      result = result.join if result.is_a? Array
+      return unless result.is_a? String
+      return if html_text == result
       self.html_text += result.to_s
     end
 
     def to_s
       html_text
+    end
+
+    def func_count
+      @func_count_s[@depth] ||= 0
+    end
+
+    def func_count=(val)
+      @func_count_s[@depth] = val
     end
 
     def props
@@ -44,13 +54,15 @@ module Molecule
     def component(name, options = {})
       comp = name.new
       comp.props = options[:props]
-      self.html_text += comp.parse
+      parsed = comp.parse
+      self.html_text += parsed
     end
 
     def parse
       before_render
       @depth = 0
       @tag_names = {}
+      @func_count_s = {}
       @attributes_s = {}
       result = render.to_s
       after_render

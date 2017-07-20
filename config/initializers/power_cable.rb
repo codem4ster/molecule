@@ -1,7 +1,7 @@
 # Handle :message events in the "chat" channel.
 # @param message [PowerStrip::Message] the message we received
 # @param connection [Faye::WebSocket] the client connection this is from
-PowerStrip.on :message, channel: 'power_cable' do |message, _connection|
+PowerStrip.on :message, channel: 'power-cable' do |message, _connection|
   params = message.data['params']
   session_id = params.delete('_sid')
   if session_id
@@ -9,7 +9,7 @@ PowerStrip.on :message, channel: 'power_cable' do |message, _connection|
     params[:session] = session
   end
   outcome = message.data['interaction'].to_s.gsub('/', '::').constantize.run(params)
-  PowerStrip[message.channel].send :message, success: outcome.valid?,
+  PowerStrip[session_id].send :message, success: outcome.valid?,
                                              errors: outcome.errors.details,
                                              data: outcome.result,
                                              '_uid' => message.data['_uid']

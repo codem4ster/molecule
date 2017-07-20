@@ -23,6 +23,7 @@ module Molecule
       end
 
       def tag(tag_name, attributes = nil, &content)
+        self.func_count += 1
         self.tag_name = tag_name
         if attributes.kind_of? String
           self.attributes = {}

@@ -5,7 +5,7 @@ class MoleculeController < ApplicationController
             Naverbot seznambot Slurp teoma Twitterbot Yandex Yeti].freeze
   def spa
     return render 'molecule/non-bots' unless bot?
-    cookies['_sid'] = Molecule::SessionStart.run!(guid: cookies['_sid'])
+    Molecule::Session.instance(cookies['_sid'])
     find_route
     render 'molecule/bots'
   end
