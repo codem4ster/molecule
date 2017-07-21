@@ -100,7 +100,7 @@ class Home
   def render
     div do
       # convert this
-      # component Header, props: { title: 'My Page' }
+      # component Long::Namespaced::Header, props: { title: 'My Page' }
       # into this
       my_header_method(title: 'My Page')
       div 'This is home body'
