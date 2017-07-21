@@ -35,7 +35,7 @@ module Molecule
         end
         define_method name do
           variable = instance_variable_get "@#{name}".to_sym
-          variable ? variable[:data] : nil
+          variable ? variable[:data] : {}
         end
       end
 
