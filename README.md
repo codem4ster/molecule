@@ -84,11 +84,57 @@ class Header
 
   def render
     div do
-      div.title { 'The title is: ' + props.title }
+      div.title { 'The title is: ' + props[:title] }
     end
   end
 end
 ````
+also we can capsulate components into methods like this
+```ruby
+# app/components/home.rb
+class Home
+  include Molecule::Component
+  
+  component :my_header_method, Long::Namespaced::Header
+
+  def render
+    div do
+      # convert this
+      # component Header, props: { title: 'My Page' }
+      # into this
+      my_header_method(title: 'My Page')
+      div 'This is home body'
+    end
+  end
+end
+````
+this gives you freedom for making reusable packed components
+```ruby
+# app/components/form_package.rb
+module FormPackage
+  include Molecule::Component
+
+  component :text_field, Form::Textfield
+  component :password_field, Form::Passwordfield
+  component :checkbox, Form::Checkbox
+  # ...
+end
+``` 
+```ruby
+# app/components/home.rb
+class Home
+  include Molecule::Component
+  include FormPackage
+
+  def render
+    div do
+      text_field(label: 'Label', name:'name')
+      checkbox(label: 'Label', name:'name', checked: true)
+      # ...
+    end
+  end
+end
+```
 
 #### Communication with backend
 Molecule components can communicate with backend through a web socket pipe which will be initialized when 

@@ -15,6 +15,12 @@ module Molecule
         @injections || {}
       end
 
+      def component(method_name, clazz)
+        define_method method_name do |props|
+          component clazz, props: props
+        end
+      end
+
       def interaction(name, interaction)
         define_method "#{name}!" do |params|
           params[:_sid] = Molecule::Session.key

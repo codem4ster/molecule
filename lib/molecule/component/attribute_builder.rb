@@ -42,7 +42,7 @@ module Molecule
 
         attributes.map do |key, value|
           next " #{key}" if value.eql? true
-          value = '"' + value + '"'
+          value = %["#{value}"]
           ' ' + [key, value].join('=')
         end.join
       end

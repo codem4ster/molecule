@@ -91,6 +91,12 @@ module Molecule
           instance_variable_get "@#{name}".to_sym
         end
       end
+
+      def component(method_name, clazz)
+        define_method method_name do |props|
+          component clazz, props: props
+        end
+      end
     end
 
     private
