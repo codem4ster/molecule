@@ -187,7 +187,46 @@ class EchoUser < ActiveInteraction::Base
   end
 end
 ```
+you can access interaction result and error with `user_data?[:success]` and `user_data?[:errors]` inside component.
+
 see; http://devblog.orgsync.com/active_interaction/ for details
+
+### Extra
+Molecule has support for serializing forms. It can give you form data as hash, so you can send it to interaction easily.
+```ruby
+module Users
+  # User creation form
+  class Create
+    include Molecule::Component
+    include FormPackage
+
+    interaction :user_data, 'Users/CreateUser'
+
+    def submit
+      data = Element['#create_user'].serialize_hash
+      user_data! data
+    end
+
+    def render
+      div.users_create!.container do
+        if user_data
+          h2 { "Hello #{user_data[:username]}" }
+        end
+        hr
+        h3 'Create New User'
+        br
+        br
+        form.create_user! do
+          text_field(label: 'Username', name: 'username')
+          text_field(label: 'Password', name: 'password')
+          input.btn.btn_default(type: 'Button', value: 'Gönder',
+                                onclick: method(:submit))
+        end
+      end
+    end
+  end
+end
+``` 
 
 ## Installation
 Add this line to your application's Gemfile:

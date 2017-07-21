@@ -14,6 +14,7 @@ def Object.pp_log(var)
 end
 
 require 'virtual_dom'
+require 'vendor/serialize'
 require 'molecule/component/virtual_dom'
 require 'molecule/component/render'
 require 'molecule/component/cache'
@@ -28,6 +29,7 @@ require 'molecule/router'
 require 'molecule/power_cable'
 require 'molecule/session'
 require 'molecule/cookie'
+require 'molecule/serializer'
 
 
 
