@@ -1,7 +1,7 @@
 module Molecule
   module Component
     module VirtualDom
-      def component(comp, opts = {})
+      def component(comp, opts = {}, &block)
         raise Error, "Component is nil in #{self.class} class" if comp.nil?
         @__virtual_nodes__ ||= []
         @__virtual_nodes__ << cache_component(comp) do
@@ -10,7 +10,7 @@ module Molecule
             .inject
           comp.init
           comp
-        end.with_props(opts[:props] || {}).render_virtual_dom
+        end.with_props(opts[:props] || {}).render_virtual_dom(&block)
         self
       end
 

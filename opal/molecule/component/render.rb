@@ -16,11 +16,11 @@ module Molecule
       def before_render; end;
       def after_render; end;
 
-      def render_virtual_dom
+      def render_virtual_dom(&block)
         before_render
         @cache_component_counter = 0
         @__virtual_nodes__ = []
-        render
+        render(&block)
         result = to_vnode
         after_render
         result

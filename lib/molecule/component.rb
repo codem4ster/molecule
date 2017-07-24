@@ -51,20 +51,20 @@ module Molecule
       @props = val
     end
 
-    def component(name, options = {})
+    def component(name, options = {}, &block)
       comp = name.new
       comp.props = options[:props]
-      parsed = comp.parse
+      parsed = comp.parse(&block)
       self.html_text += parsed
     end
 
-    def parse
+    def parse(&block)
       before_render
       @depth = 0
       @tag_names = {}
       @func_count_s = {}
       @attributes_s = {}
-      result = render.to_s
+      result = render(&block).to_s
       after_render
       result
     end
@@ -93,8 +93,8 @@ module Molecule
       end
 
       def component(method_name, clazz)
-        define_method method_name do |props|
-          component clazz, props: props
+        define_method method_name do |props, &block|
+          component clazz, props: props, &block
         end
       end
     end

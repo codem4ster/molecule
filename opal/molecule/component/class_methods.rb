@@ -16,8 +16,8 @@ module Molecule
       end
 
       def component(method_name, clazz)
-        define_method method_name do |props|
-          component clazz, props: props
+        define_method method_name do |props , &block|
+          component clazz, props: props, &block
         end
       end
 
