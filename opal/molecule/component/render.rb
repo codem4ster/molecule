@@ -20,7 +20,11 @@ module Molecule
         before_render
         @cache_component_counter = 0
         @__virtual_nodes__ = []
-        render(&block)
+        if block_given?
+          render(&block)
+        else
+          render
+        end
         result = to_vnode
         after_render
         result

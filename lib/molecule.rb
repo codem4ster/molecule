@@ -7,7 +7,6 @@ require 'power_strip'
 require 'active_interaction'
 Opal.append_path File.expand_path('../../opal', __FILE__)
 
-require 'opal-virtual-dom'
 require 'molecule/config'
 
 module Molecule

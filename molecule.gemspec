@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'rails', '~> 5.1.2'
   s.add_dependency 'opal-rails'
-  s.add_dependency 'opal-virtual-dom', '~> 0.5.0'
   s.add_dependency 'opal-browser'
   s.add_dependency 'opal-jquery'
   s.add_dependency 'active_interaction'

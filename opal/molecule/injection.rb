@@ -1,6 +1,6 @@
 module Molecule
   module Injection
-    def init; end
+    def init; self end
 
     def with_root_component(component)
       @root_component = component
