@@ -37,15 +37,29 @@ module VirtualDOM
       return unless @__last_virtual_node__
       return unless @__virtual_nodes__
       @__virtual_nodes__.pop
-      class_params = @__last_virtual_node__.params.delete(:className)
-      method_params = if clazz.end_with?('!')
-                        { id: clazz[0..-2],
-                          class: merge_string(class_params, params[:class]) }
-                      else
-                        { class: merge_string(class_params, params[:class], clazz.gsub('_', '-').gsub('--', '_')) }
-                      end
-      params = @__last_virtual_node__.params.merge(params).merge(method_params)
-      process_tag(@__last_virtual_node__.name, params, block)
+      block = -> { params } if params.is_a? String
+      method_params = method_params(clazz, params)
+      process_tag(@__last_virtual_node__.name, method_params, block)
+    end
+
+    def method_params(clazz, params)
+      class_params = merged_class_params(params, clazz)
+      @__last_virtual_node__.params.merge(class_params)
+      class_params.merge params if params.is_a? Hash
+      class_params
+    end
+
+    def merged_class_params(params, clazz)
+      classes = @__last_virtual_node__.params.delete(:className)
+      id = @__last_virtual_node__.params.delete(:id)
+      param_hash = { id: id, class: merge_string(classes, params[:class]) }
+      if clazz.end_with?('!')
+        param_hash[:id] = clazz[0..-2]
+      else
+        reverted_clazz = clazz.tr('_', '-').gsub('--', '_')
+        param_hash[:class] = merge_string(param_hash[:class], reverted_clazz)
+      end
+      param_hash.reject { |_, v| v.nil? }
     end
 
     def merge_string(*params)
@@ -59,18 +73,13 @@ module VirtualDOM
 
     def process_params(params)
       return {} unless params.is_a?(Hash)
+      param_map = { 'for' => 'htmlFor', 'class' => 'className',
+                    'data' => 'dataset', 'default' => 'defaultValue' }
       params.dup.each do |k, v|
-        case k
-          when 'for'
-            params['htmlFor'] = params.delete('for')
-          when 'class'
-            params['className'] = params.delete('class')
-          when 'data'
-            params['dataset'] = params.delete('data')
-          when 'default'
-            params['defaultValue'] = params.delete('default')
-          when /^on/
-            params[k] = event_callback(v)
+        if param_map.key?(k)
+          params[param_map[k]] = params.delete(k)
+        elsif k =~ /^on/
+          params[k] = event_callback(v)
         end
       end
       params
