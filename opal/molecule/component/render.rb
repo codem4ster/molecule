@@ -15,9 +15,13 @@ module Molecule
 
       def before_render; end;
       def after_render; end;
+      def shared_init; end;
+      def shared_after; end;
 
       def render_virtual_dom(&block)
         before_render
+        shared_init unless @__inited__
+        @__inited__ = true
         @cache_component_counter = 0
         @__virtual_nodes__ = []
         if block_given?
@@ -27,6 +31,8 @@ module Molecule
         end
         result = to_vnode
         after_render
+        shared_after unless @__finished__
+        @__finished__ = true
         result
       end
     end

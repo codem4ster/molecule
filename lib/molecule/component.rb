@@ -12,9 +12,10 @@ module Molecule
       end
     end
 
-    def before_render; end
-
-    def after_render; end
+    def shared_init; end
+    def server_init; end
+    def shared_after; end
+    def server_after; end
 
     def run(interaction, params)
       interaction.run(params)
@@ -59,13 +60,15 @@ module Molecule
     end
 
     def parse(&block)
-      before_render
+      shared_init
+      server_init
       @depth = 0
       @tag_names = {}
       @func_count_s = {}
       @attributes_s = {}
       result = render(&block).to_s
-      after_render
+      server_after
+      shared_after
       result
     end
 
@@ -75,11 +78,6 @@ module Molecule
 
     # Classmethods of component module
     module ClassMethods
-      def init(&block)
-        define_method :before_render do
-          self.instance_eval &block
-        end
-      end
 
       def interaction(name, interaction)
         define_method "#{name}!" do |params|

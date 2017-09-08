@@ -37,12 +37,13 @@ module Molecule
           variable = instance_variable_get "@#{name}".to_sym
           variable ? variable[:data] : {}
         end
-      end
-
-      def init(&block)
-        define_method :before_render do
-          self.instance_eval { @initied } || self.instance_eval(&block)
-          self.instance_eval { @initied = true }
+        define_method "#{name}=" do |val|
+          variable = instance_variable_get "@#{name}".to_sym
+          if variable
+            variable[:data] = val
+          else
+            instance_variable_set "@#{name}", { data: val }
+          end
         end
       end
     end

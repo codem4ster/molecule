@@ -8,7 +8,6 @@ module Molecule
           comp = (comp.is_a?(Class) ? comp.new : comp)
             .with_root_component(@root_component)
             .inject
-            .init
           comp
         end.with_props(opts[:props] || {}).render_virtual_dom(&block)
         self
