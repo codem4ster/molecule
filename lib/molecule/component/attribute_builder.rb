@@ -15,7 +15,7 @@ module Molecule
       def build_style
         return unless attributes[:style].is_a? Hash
         attributes[:style] = attributes[:style].map do |attr, value|
-          attr = attr.to_s.tr('_', '-')
+          attr = attr.to_s.tr('_', '-').gsub('--', '_')
           "#{attr}:#{value}"
         end.join(';')
       end
@@ -33,12 +33,22 @@ module Molecule
         end
       end
 
+      def extract_data_attr
+        return unless attributes.key? :data
+        data_values = attributes.delete(:data)
+        data_values.each do |key, value|
+          attributes["data-#{key}"] = value
+        end
+      end
+
       def build_attributes
         return unless attributes.is_a? Hash
 
+        extract_data_attr
         check_class_name
         build_style
         reject_callbacks
+
 
         attributes.map do |key, value|
           next " #{key}" if value.eql? true

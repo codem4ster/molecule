@@ -109,9 +109,14 @@ module Molecule
     end
 
     def add_attribute(key, value)
-      attributes[key] ||= ''
-      attributes[key] += " #{value}"
-      attributes[key] = attributes[key].gsub(/^ /, '')
+      if value.is_a? Hash
+        attributes[key] ||= {}
+        attributes[key].merge! value
+      else
+        attributes[key] ||= ''
+        attributes[key] += " #{value}"
+        attributes[key] = attributes[key].strip
+      end
     end
 
   end
