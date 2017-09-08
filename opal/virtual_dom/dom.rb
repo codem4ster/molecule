@@ -44,31 +44,26 @@ module VirtualDOM
 
     def method_params(clazz, params)
       class_params = merged_class_params(params, clazz)
+      class_params.merge! params if params.is_a? Hash
       @__last_virtual_node__.params.merge(class_params)
-      class_params.merge params if params.is_a? Hash
       class_params
     end
 
     def merged_class_params(params, clazz)
       classes = @__last_virtual_node__.params.delete(:className)
       id = @__last_virtual_node__.params.delete(:id)
-      param_hash = { id: id, class: merge_string(classes, params[:class]) }
+      param_hash = { id: id, class: join_str(classes, params[:class]) }
       if clazz.end_with?('!')
         param_hash[:id] = clazz[0..-2]
       else
         reverted_clazz = clazz.tr('_', '-').gsub('--', '_')
-        param_hash[:class] = merge_string(param_hash[:class], reverted_clazz)
+        param_hash[:class] = join_str param_hash[:class], reverted_clazz
       end
       param_hash.reject { |_, v| v.nil? }
     end
 
-    def merge_string(*params)
-      arr = []
-      params.each do |string|
-        next unless string
-        arr << string.split(' ')
-      end
-      arr.join(' ')
+    def join_str(*params)
+      params.join(' ').strip
     end
 
     def process_params(params)
