@@ -34,9 +34,9 @@ module Molecule
       end
     end
 
-    def render!
+    def render!(rerendering=true)
       Browser.animation_frame do
-        @root_component.render_if_root
+        @root_component.render_if_root(rerendering)
       end
     end
   end

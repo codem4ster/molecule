@@ -9,7 +9,7 @@ module Molecule
             .with_root_component(@root_component)
             .inject
           comp
-        end.with_props(opts[:props] || {}).render_virtual_dom(&block)
+        end.with_props(opts[:props] || {}).render_virtual_dom(@rerendering, &block)
         self
       end
 

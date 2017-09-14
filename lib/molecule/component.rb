@@ -14,8 +14,11 @@ module Molecule
 
     def shared_init; end
     def server_init; end
+    def shared_before; end
     def shared_after; end
+    def server_before; end
     def server_after; end
+    def shared_finish; end
 
     def run(interaction, params)
       interaction.run(params)
@@ -62,6 +65,8 @@ module Molecule
     def parse(&block)
       shared_init
       server_init
+      shared_before
+      server_before
       @depth = 0
       @tag_names = {}
       @func_count_s = {}
@@ -69,6 +74,7 @@ module Molecule
       result = render(&block).to_s
       server_after
       shared_after
+      shared_finish
       result
     end
 

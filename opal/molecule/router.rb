@@ -66,7 +66,7 @@ module Molecule
       Browser.push_state(path)
       find_route
       parse_url_params
-      render!
+      render!(false)
       false
     end
 

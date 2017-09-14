@@ -8,11 +8,6 @@ require 'browser'
 require 'bowser'
 require 'power_strip'
 require 'pp'
-
-def Object.pp_log(var)
-  $console.log(var)
-end
-
 require 'virtual_dom'
 require 'vendor/serialize'
 require 'molecule/component/virtual_dom'

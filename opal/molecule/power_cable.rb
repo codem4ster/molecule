@@ -8,8 +8,8 @@ module Molecule
         path = '/molecule/power_cable'
         client = PowerStrip::Client.new(BASE_URL.gsub(/http|https/, 'ws') + path)
 
-        client.on(:connect) { pp_log 'power cable connected' }
-        client.on(:disconnect) { pp_log 'power cable disconnected' }
+        client.on(:connect) { puts 'power cable connected' }
+        client.on(:disconnect) { puts 'power cable disconnected' }
 
         GLOBAL_CHANNEL = client.subscribe('power-cable')
         CHANNEL = client.subscribe(Molecule::Session.key)
