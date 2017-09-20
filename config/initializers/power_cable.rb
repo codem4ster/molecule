@@ -8,9 +8,16 @@ PowerStrip.on :message, channel: 'power-cable' do |message, _connection|
     session = Molecule::Session.new(session_id)
     params[:session] = session
   end
-  outcome = message.data['interaction'].to_s.gsub('/', '::').constantize.run(params)
+  interaction = message.data['interaction'].to_s.gsub('/', '::').constantize
+  outcome = interaction.run(params)
+  errors = {}
+  unless outcome.valid?
+    errors = outcome.errors.each_with_index.map do |field, i|
+      [field[0], outcome.errors.full_messages[i]]
+    end.to_h
+  end
   PowerStrip[session_id].send :message, success: outcome.valid?,
-                                             errors: outcome.errors.details,
-                                             data: outcome.result,
-                                             '_uid' => message.data['_uid']
+                              errors: errors,
+                              data: outcome.result,
+                              '_uid' => message.data['_uid']
 end

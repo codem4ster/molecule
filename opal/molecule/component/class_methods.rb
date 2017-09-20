@@ -31,7 +31,12 @@ module Molecule
         end
         define_method "#{name}?" do
           variable = instance_variable_get "@#{name}".to_sym
-          { success: variable[:success], errors: variable[:errors] }
+          if variable
+            { success: variable[:success], errors: variable[:errors] }
+          else
+            { success: false, errors: [] }
+          end
+
         end
         define_method name do
           variable = instance_variable_get "@#{name}".to_sym
