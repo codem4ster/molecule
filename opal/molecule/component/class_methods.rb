@@ -34,7 +34,7 @@ module Molecule
           if variable
             { success: variable[:success], errors: variable[:errors] }
           else
-            { success: false, errors: [] }
+            { success: false, errors: {} }
           end
 
         end
